@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.stats
-import pandas as pd
 import math
 
 
@@ -58,10 +57,3 @@ def pop_mean_sample_size(N, d, alpha, s, finite=True):
     z = scipy.stats.norm.ppf(1-alpha/2)
     n = 1 / ((d**2 / (z**2 * s**2)) + correction_factor)
     return math.ceil(n)
-
-
-
-
-
-#print(srsMeanCI(y_bar=222.875, s2=1932.657, n=8, N=100, alpha=0.05))
-#print(srsTotalCI(tau=22287.5, s2=1932.657, n=8, N=100, alpha=0.05))
