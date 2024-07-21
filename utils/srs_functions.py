@@ -3,31 +3,6 @@ import scipy.stats
 import math
 
 
-
-def srs_mean_ci(y_bar, s2, n, N, alpha, finite=True):
-    if finite:
-        var_y_bar = ((N - n)/N) * (s2 / n)
-    else:
-        var_y_bar = s2/n
-
-    upper_ci = y_bar + scipy.stats.t.ppf(1 - alpha/2, n-1) * np.sqrt(var_y_bar)
-    lower_ci = lower_ci = y_bar - scipy.stats.t.ppf(1 - alpha/2, n-1) * np.sqrt(var_y_bar)
-
-    return (lower_ci, y_bar, upper_ci, n)
-
-
-def srs_total_ci(tau, s2, n, N, alpha, finite=True):
-    if finite:
-        var_tau = N**2 * (N-n)/N * s2/n
-    else:
-        var_tau = N**2 * s2/n
-
-    upper_ci = tau + scipy.stats.t.ppf(1 - alpha/2, n-1) * np.sqrt(var_tau)
-    lower_ci = tau - scipy.stats.t.ppf(1 - alpha/2, n-1) * np.sqrt(var_tau)
-
-    return (lower_ci, tau, upper_ci, n)
-
-
 def pop_total_sample_size(N, d, alpha, s, method = 'standard', finite = True):
     if finite:
         correction_factor = 1/N
@@ -56,4 +31,17 @@ def pop_mean_sample_size(N, d, alpha, s, finite=True):
 
     z = scipy.stats.norm.ppf(1-alpha/2)
     n = 1 / ((d**2 / (z**2 * s**2)) + correction_factor)
+    return math.ceil(n)
+
+
+
+def proportion_sample_size(p, d, alpha, N = None, finite=True):
+    z = scipy.stats.norm.ppf(1-alpha/2)
+    n0 = (p*(1-p)*z**2)/d**2
+
+    if finite:
+        n = 1/(1/n0 + 1/N)
+    else:
+        n = n0
+
     return math.ceil(n)
