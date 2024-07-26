@@ -19,10 +19,10 @@ def show_tab3():
 
     # Assign each number input to a column
     with col1:
-        N = st.number_input("N", min_value=1, value=10000, format="%d", step=1, 
+        N = st.number_input("N", min_value=1, value=None, format="%d", step=1, 
                             key='N3', help='Total population size')
     with col2:
-        d = st.number_input("d", min_value=0.01, value=2.0, step=0.01, 
+        d = st.number_input("d", min_value=0.01, value=0.03, step=0.01, 
                             key='d3', help='Desired precision')
     with col3:
         p = st.number_input("p", value=0.5, 
@@ -31,11 +31,16 @@ def show_tab3():
     st.divider()
 
     if st.button('Calculate Sample Size', key='button3'):
-        test = srs.proportion_sample_size(p, d, alpha, N)  # ensure the function name matches the imported module
+        if N:
+            is_finite=True
+        else:
+            is_finite=False
+
+        test = srs.proportion_sample_size(p, d, alpha, N, is_finite)  # ensure the function name matches the imported module
         st.write(f'### Sample Size Required: {test}')
 
         alpha_range = [round(a, 2) for a in np.arange(0.01, 0.21, 0.01)]
-        a_val = [srs.proportion_sample_size(p, d, alpha, N) for a in alpha_range]
+        a_val = [srs.proportion_sample_size(p, d, alpha, N, is_finite) for a in alpha_range]
         a_chosen = ["#ffa421" if a==alpha else "#1c83e1" for a in alpha_range]
 
         if d >= 20:
@@ -49,7 +54,7 @@ def show_tab3():
 
         d_range = np.concatenate((d_lower, d_upper[1:]))
         #[round(a, 2) for a in np.linspace(d_lower, d_upper, 20, dtype=int)]
-        d_val = [srs.proportion_sample_size(p, d, alpha, N) for d in d_range]
+        d_val = [srs.proportion_sample_size(p, d, alpha, N, is_finite) for d in d_range]
         d_chosen = ["#ffa421" if i==d else "#1c83e1" for i in d_range]
 
         data_a = {
